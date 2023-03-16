@@ -33,7 +33,10 @@ class RenamerHandler(FileSystemEventHandler):
     #  === CLASS CONSTANTS ===  #
     #############################
 
-    READ_BYTES_FOR_HASH: int = 1048576
+    # Not in use right now - Still not sure what's the right number of blocks
+    # to use, but the screenshots are small enough that this isn't an issue at
+    # the moment
+    # READ_BYTES_FOR_HASH: int = 1048576
     """ Bytes to read to calculate our hash."""
 
     CONSTRUCT_FN: str = 'Screenshot-{datetime}-{checksum}{ext}'
@@ -78,9 +81,12 @@ class RenamerHandler(FileSystemEventHandler):
         :rtype: str
         """
         with open(path, 'rb') as fh:
+            # data = fh.read(cls.READ_BYTES_FOR_HASH)
             data = fh.read()
             checksum = hashlib.sha256(data).hexdigest()
         partial = checksum[-8:]
+        # _logger.debug('%s: SHA-256 for first %d bytes: %s, partial: %s',
+        #                 path, cls.READ_BYTES_FOR_HASH, checksum, partial)
         _logger.debug('%s: SHA-256: %s, partial: %s',
                         path, checksum, partial)
         return partial
